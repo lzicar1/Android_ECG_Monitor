@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/bluegraph-master.iml" filepath="$PROJECT_DIR$/bluegraph-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Android_ECG_Monitor_.iml" filepath="$PROJECT_DIR$/.idea/modules/Android_ECG_Monitor_.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Android_ECG_Monitor_.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Android_ECG_Monitor_.app.iml" />
     </modules>
   </component>
 </project>

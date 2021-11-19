@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 
 import android.widget.Toast;
@@ -120,13 +121,74 @@ public class MainActivity extends ActionBarActivity
             mBluetoothSPP.setBluetoothConnectionListener(new BluetoothSPP.BluetoothConnectionListener() {
                 public void onDeviceConnected(String name, String address) {
                     connected = true;
+                    Log.e("2", "Connected");
                     Toast toast = Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_LONG);
                     toast.show();
-                    //mNavigationDrawerFragment.selectItem(2);
+                    mNavigationDrawerFragment.selectItem(2);
+
+                    mBluetoothSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
+
+                        public void onDataReceived(byte[] data, String message) {
+                            Log.e("2","Data value : " + data.toString() + "Message : " + message);
+                            //if (streamOpen) {
+                            //    writeToFile(message);
+                            //}
+                            if (firstDump) {
+                                firstDump = false;
+                                return;
+                            }
+
+                            GraphFragment graph = (GraphFragment) fragmentManager.findFragmentByTag("GRAPH");
+
+                            if (graph != null && graph.isGraphOpen()) {
+                                if (!axisInitialized) {
+                                    if(sharedPref.getBoolean("pref_startTagOn", false)){
+                                        String tmp = sharedPref.getString("pref_startTag","");
+                                        message.replace(tmp,"");
+                                    }
+                                    axis = (message.split(sharedPref.getString("pref_delimiter", ","))).length;
+                                    Log.e("2", "axis: " + axis);
+                                    if (mSeries == null || mSeries.length != axis) {
+                                        mSeries = new LineGraphSeries[axis];
+                                        mSeries[0] = new LineGraphSeries<>();
+                                    }
+                                    graph.initialize(mSeries);
+                                    axisInitialized = true;
+                                } else {
+
+                                    parts = message.split(sharedPref.getString("pref_delimiter", ","));
+                                    int tmp = Integer.parseInt(sharedPref.getString("pref_windowSize", "200"));
+                                    try {
+                                        mSeries[0].appendData(new DataPoint(graphLastXValue, Float.parseFloat(parts[0])), true, tmp);
+                                        Log.e("2", "Data added: " + Float.parseFloat(parts[0]));
+                                        graphLastXValue++;
+                                        Log.e("2", "graphLastXValue: " + graphLastXValue);
+                                        Log.e("2", "bpm: " + Float.parseFloat(parts[1]));
+                                        bpm=Float.parseFloat(parts[1]);
+
+                                        if(bpm!=0) {
+                                            mGraphFragment.setvalue(bpm);
+                                            mGraphFragment.setcolor(bpm);
+                                            mGraphFragment.settext(bpm);
+                                        }
+
+                                    } catch (NumberFormatException e) {
+                                        Toast toast = Toast.makeText(getApplicationContext(), "Make sure the delimiter is correct", Toast.LENGTH_LONG);
+                                        toast.show();
+                                        mNavigationDrawerFragment.selectItem(1);
+                                        return;
+                                    }
+                                }
+                            } else {
+                                axisInitialized = false;
+                            }
+                        }
+                    });
                 }
 
                 public void onDeviceDisconnected() {
                     connected = false;
+                    Log.e("2", "Disonnected");
                     Toast toast = Toast.makeText(getApplicationContext(), "Disconnected", Toast.LENGTH_LONG);
                     toast.show();
                 }
@@ -201,73 +263,13 @@ public class MainActivity extends ActionBarActivity
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("3", "Hello.........." + data.toString());
         if(requestCode == BluetoothState.REQUEST_CONNECT_DEVICE) {
+            Log.e("3", "OK");
             if(resultCode == Activity.RESULT_OK) {
+                Log.e("3", "OK2");
                 mBluetoothSPP.connect(data);
-                mBluetoothSPP.setOnDataReceivedListener(new BluetoothSPP.OnDataReceivedListener() {
 
-                    public void onDataReceived(byte[] data, String message) {
-                        if (streamOpen) {
-                            writeToFile(message);
-                        }
-                        if (firstDump) {
-                            firstDump = false;
-                            return;
-                        }
-                        GraphFragment graph = (GraphFragment) fragmentManager.findFragmentByTag("GRAPH");
-
-                        if (graph != null && graph.isGraphOpen()) {
-                            if (!axisInitialized) {
-                                if(sharedPref.getBoolean("pref_startTagOn", false)){
-                                    String tmp = sharedPref.getString("pref_startTag","");
-                                    message.replace(tmp,"");
-                                }
-                                axis = (message.split(sharedPref.getString("pref_delimiter", ","))).length;
-                                if (mSeries == null || mSeries.length != axis) {
-                                    mSeries = new LineGraphSeries[axis];
-
-                                    mSeries[0] = new LineGraphSeries<>();
-
-
-                                }
-                                graph.initialize(mSeries);
-                                axisInitialized = true;
-                            } else {
-                                parts = message.split(sharedPref.getString("pref_delimiter", ","));
-                                int tmp = Integer.parseInt(sharedPref.getString("pref_windowSize", "200"));
-
-                                try {
-
-                                    mSeries[0].appendData(new DataPoint(graphLastXValue, Float.parseFloat(parts[0])), true, tmp);
-                                    graphLastXValue++;
-                                    bpm=Float.parseFloat(parts[1]);
-
-                                    if(bpm!=0)
-                                    {
-                                        mGraphFragment.setvalue(bpm);
-                                        mGraphFragment.setcolor(bpm);
-                                        mGraphFragment.settext(bpm);
-
-                                    }
-
-
-
-
-
-                                } catch (NumberFormatException e) {
-                                    Toast toast = Toast.makeText(getApplicationContext(), "Make sure the delimiter is correct", Toast.LENGTH_LONG);
-                                    toast.show();
-                                    mNavigationDrawerFragment.selectItem(1);
-                                    return;
-                                }
-
-                            }
-                        } else {
-                            axisInitialized = false;
-                        }
-                    }
-
-                });
             }
         } else if(requestCode == BluetoothState.REQUEST_ENABLE_BT) {
             if(resultCode == Activity.RESULT_OK) {

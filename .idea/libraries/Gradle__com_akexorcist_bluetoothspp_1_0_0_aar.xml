@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.akexorcist:bluetoothspp:1.0.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/309be37a014e1d83b57d49386bb6cd33378bbc1a/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/309be37a014e1d83b57d49386bb6cd33378bbc1a/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/309be37a014e1d83b57d49386bb6cd33378bbc1a/output/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

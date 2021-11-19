@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.android.support:support-v4:22.1.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/701b3b47d202dccc2e8eef0cbddf6a7425cbbbcf/output/jars/classes.jar!/" />
+      <root url="jar://$USER_HOME$/.android/build-cache/701b3b47d202dccc2e8eef0cbddf6a7425cbbbcf/output/jars/libs/internal_impl-22.1.1.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/701b3b47d202dccc2e8eef0cbddf6a7425cbbbcf/output/res" />
+      <root url="file://$USER_HOME$/.android/build-cache/701b3b47d202dccc2e8eef0cbddf6a7425cbbbcf/output/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
